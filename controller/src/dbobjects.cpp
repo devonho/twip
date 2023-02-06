@@ -64,6 +64,17 @@ PoseDBObject::PoseDBObject()
     name = "Pose";
 }
 
+void PoseDBObject::operator=(PoseDBObject pose)
+{
+    this->orientx = pose.orientx;
+    this->orienty = pose.orienty;
+    this->orientz = pose.orientz;
+    this->posx = pose.posx;
+    this->posy = pose.posy;
+    this->posz = pose.posz;
+    this->timestamp = pose.timestamp;
+}
+
 PoseDBObject::PoseDBObject(float orientx, float orienty, float orientz, float posx, float posy, float posz, long unsigned int timestamp)
 {
     this->orientx = orientx;

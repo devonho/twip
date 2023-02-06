@@ -34,6 +34,8 @@ namespace twip
             PoseDBObject(float orientx, float orienty, float orientz, float posx, float posy, float posz, long unsigned int timestamp);
             ~PoseDBObject(){};
 
+            void operator=(PoseDBObject pose);
+
         std::vector<std::string> get_columns();
         std::vector<std::string> get_values();
         std::vector<std::string> get_column_types();

@@ -15,26 +15,20 @@
 #include "log4cpp/BasicLayout.hh"
 #include "log4cpp/Priority.hh"
 
-void writedb();
+#include "queue.h"
+#include "PIDController.h"
 
 static std::atomic<bool> g_terminatePub(false);
+log4cpp::Category& root = log4cpp::Category::getRoot();
+gz::transport::Node node;
+gz::transport::Node::Publisher pub;
+twip::Queue pose_mq;
 
 void signal_handler(int _signal)
 {
     if (_signal == SIGINT || _signal == SIGTERM)
         g_terminatePub = true;
 }
-
-float velocity = 0.0f;
-float lasterr = 0.0f;
-float cumerr = 0.0f;
-gz::transport::Node node;
-gz::transport::Node::Publisher pub;
-gz::transport::Node::Publisher pub_ctrl;
-gz::msgs::Twist msg;
-gz::msgs::Vector3d v;
-unsigned long itercount = 0;
-log4cpp::Category& root = log4cpp::Category::getRoot();
 
 void reset_world()
 {
@@ -48,32 +42,7 @@ void reset_world()
 
 void cb(const gz::msgs::Pose &_msg)
 {
-    gz::msgs::Quaternion qm = _msg.orientation();
-    gz::math::Quaternionf q;
-    q.Set(qm.w(),qm.x(),qm.y(),qm.z());
-
-    float err = q.Pitch();
-    if (pub)
-    {
-        float P = err * 100;      
-        float I = cumerr * 0.00;
-        float D = (lasterr - err) * 10;         
-        v.set_x(P + I + D);
-
-        root << log4cpp::Priority::DEBUG << (P + I + D);
-
-        *msg.mutable_linear() = v;
-        pub.Publish(msg);
-    }
-
-    itercount++;
-    if(itercount > 1000){
-        reset_world();
-        itercount=0;
-    }
-
-    lasterr = err;
-    cumerr += err;
+    pose_mq.push(_msg);
 }
 
 void setup_logging()
@@ -105,15 +74,32 @@ void setup_subscriptions()
 }
 
 int main(int argc, char **argv)
-{
-    // Install a signal handler for SIGINT and SIGTERM.
+{    
     std::signal(SIGINT, signal_handler);
     std::signal(SIGTERM, signal_handler);
 
     setup_logging();
     setup_subscriptions();
    
-    gz::transport::waitForShutdown();
+    twip::PIDController controller;
+    unsigned long itercount = 0;
+
+    while(!g_terminatePub) {
+
+        gz::msgs::Pose pose;
+        gz::msgs::Twist twist;
+        pose_mq.pop_wait(pose);        
+        twist = controller.step(pose);
+        pub.Publish(twist);
+        
+        itercount++;
+        if(itercount > 500){
+            reset_world();
+            itercount=0;
+        }
+    }
+
+    //gz::transport::waitForShutdown();
     
     return 0;
 }

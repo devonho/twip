@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(controller)
 
-add_executable(controller main.cpp db.cpp dbobjects.cpp queue.cpp PIDController.cpp)
+add_executable(controller main.cpp db.cpp dbobjects.cpp queue.cpp PIDController.cpp PIDTuner.cpp GzHelper.cpp)
 
 find_package(gz-transport12 REQUIRED)
 find_package(gz-msgs9 REQUIRED)

@@ -9,11 +9,14 @@ namespace twip
 {
 class PIDTuner 
 {
+    DBWriter* _pDb;
+    GzHelper* _pGz;
 public:
     PIDTuner(DBWriter* pDb, GzHelper* pGz);
     ~PIDTuner(){};
     
-    void runTrial();
+    void runTrial(PIDController* pCtrl);
+    void runTrials();
 };
     
 } // namespace twip

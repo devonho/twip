@@ -11,6 +11,7 @@
 
 #include "queue.h"
 #include "PIDController.h"
+#include "PIDTuner.h"
 #include "GzHelper.h"
 
 static std::atomic<bool> g_terminatePub(false);
@@ -38,22 +39,15 @@ int main(int argc, char **argv)
 
     setup_logging();
    
+    std::string filename = "pidtune.db";
+    std::remove(filename.c_str());
+    twip::DBWriter db(filename);
     twip::GzHelper* pGz = twip::GzHelper::getInstance();
     twip::PIDController controller;
-    unsigned long itercount = 0;
 
-    while(!g_terminatePub) {
-
-        
-        pGz->send_command(controller.step(pGz->get_pose()));
-        
-        itercount++;
-        if(itercount > 500){
-            pGz->reset_world();
-            itercount=0;
-        }
-        
-    }
+    twip::PIDTuner tuner(&db, pGz);
+    tuner.runTrials();
+    //while(!g_terminatePub) {}
    
     return 0;
 }

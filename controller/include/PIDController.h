@@ -14,6 +14,9 @@ public:
     PIDController();
     ~PIDController();
     gz::msgs::Twist step(const gz::msgs::Pose &_msg);
+    float Kp = 100.0;
+    float Ki = 0.0;
+    float Kd = 10.0;
 };
 
 }

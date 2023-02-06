@@ -15,9 +15,9 @@ gz::msgs::Twist PIDController::step(const gz::msgs::Pose &_msg) {
 
     float err = q.Pitch();
 
-    float P = err * 100;      
-    float I = _cumerr * 0.00;
-    float D = (_lasterr - err) * 10;         
+    float P = err * Kp;      
+    float I = _cumerr * Ki;
+    float D = (_lasterr - err) * Kd;         
     v.set_x(P + I + D);
 
     //root << log4cpp::Priority::DEBUG << (P + I + D);

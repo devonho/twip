@@ -84,7 +84,22 @@ PoseDBObject::PoseDBObject(float orientx, float orienty, float orientz, float po
     this->posy = posy;
     this->posz = posz;
     this->timestamp = timestamp;
-    name = "Pose";
+    this->name = "Pose";
+}
+
+PoseDBObject::PoseDBObject(gz::msgs::Pose pose, long unsigned int timestamp)
+{
+    gz::msgs::Quaternion qm = pose.orientation();
+    gz::math::Quaternionf q;
+    q.Set(qm.w(),qm.x(),qm.y(),qm.z());
+    this->orientx = q.Roll();
+    this->orienty = q.Pitch();
+    this->orientz = q.Yaw();
+    this->posx = pose.position().x();
+    this->posy = pose.position().y();
+    this->posz = pose.position().z();
+    this->timestamp = timestamp;
+    this->name = "Pose";
 }
 
 std::vector<std::string> PoseDBObject::get_columns()

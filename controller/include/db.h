@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+#include <gz/msgs.hh>
+
 namespace twip 
 {
     class DBObject 
@@ -31,14 +33,15 @@ namespace twip
             long unsigned int timestamp;
 
             PoseDBObject();
+            PoseDBObject(gz::msgs::Pose pose, long unsigned int timestamp);
             PoseDBObject(float orientx, float orienty, float orientz, float posx, float posy, float posz, long unsigned int timestamp);
             ~PoseDBObject(){};
 
             void operator=(PoseDBObject pose);
 
-        std::vector<std::string> get_columns();
-        std::vector<std::string> get_values();
-        std::vector<std::string> get_column_types();
+            std::vector<std::string> get_columns();
+            std::vector<std::string> get_values();
+            std::vector<std::string> get_column_types();
     };
 
     class PIDParamDBObject : public DBObject

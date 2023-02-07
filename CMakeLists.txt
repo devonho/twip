@@ -6,4 +6,4 @@ add_subdirectory(controller)
 
 include(CTest)
 add_test(NAME unittests COMMAND test_controller)
-set_tests_properties(unittests PROPERTIES PASS_REGULAR_EXPRESSION "100% tests passed" )
+set_tests_properties(unittests PROPERTIES PASS_REGULAR_EXPRESSION "All tests passed" )

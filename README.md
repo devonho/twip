@@ -31,6 +31,8 @@ sudo apt-get install cmake sqlite3 libgz-msgs9-dev libgz-transport12-dev liblog4
 
 ### Build
 
+[![CMake](https://github.com/devonho/twip/actions/workflows/cmake.yml/badge.svg)](https://github.com/devonho/twip/actions/workflows/cmake.yml)
+
 ```
 git clone https://github.com/devonho/twip.git
 cd twip

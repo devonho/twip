@@ -56,6 +56,11 @@ void PIDTuner::runTrials()
                 ctrl.Kd = i * 100;
                 ctrl.Ki = j * 0.001;
                 ctrl.Kd = k * 10;
+                /*
+                ctrl.Kd = 100;
+                ctrl.Ki = 0.981;
+                ctrl.Kd = 10;
+                */
                 runTrial(&ctrl);
 
                 if(g_terminatePub) break;

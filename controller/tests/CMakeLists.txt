@@ -20,3 +20,4 @@ add_executable(test_controller
 target_include_directories(test_controller PRIVATE ${CONTROLLER_INCLUDE})
 
 target_link_libraries(test_controller sqlite3 Threads::Threads gz-msgs9)
+

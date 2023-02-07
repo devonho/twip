@@ -47,7 +47,7 @@ bool Queue::pop_wait(gz::msgs::Pose &pose){
                 req = rem;
             } while(rem.tv_nsec > 0);            
             count++;
-            //if(count >= _timeoutms) return false;
+            if(count >= _timeoutms) return false;
         }        
     }
     

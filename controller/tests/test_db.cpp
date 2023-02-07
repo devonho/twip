@@ -7,7 +7,7 @@
 
 TEST_CASE( "insert into db", "[database]" ) {
 
-    std::string filename = "/var/tmp/test/foo.db";
+    std::string filename = "/var/tmp/foo.db";
     std::remove(filename.c_str());
     twip::DBWriter db(filename);
     twip::PoseDBObject obj1(1,2,3,4,5,6,7);     

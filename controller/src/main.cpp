@@ -1,7 +1,7 @@
 #include <csignal>
 #include <iostream>
 #include <string>
-#include <thread>
+#include <unistd.h>
 
 #include "log4cpp/Category.hh"
 #include "log4cpp/Appender.hh"
@@ -14,7 +14,7 @@
 #include "PIDTuner.h"
 #include "GzHelper.h"
 
-static std::atomic<bool> g_terminatePub(false);
+std::atomic<bool> g_terminatePub(false);
 log4cpp::Category& root = log4cpp::Category::getRoot();
 
 void signal_handler(int _signal)
@@ -34,20 +34,28 @@ void setup_logging()
 
 int main(int argc, char **argv)
 {    
+    std::string dbpath = "./pidtune.db";
+    extern char *optarg;
+    int f;
+    while((f = getopt(argc, argv, "f:")) != -1) {
+        switch(f){
+            case 'f':
+                dbpath = optarg;
+        }
+    }
+    
     std::signal(SIGINT, signal_handler);
     std::signal(SIGTERM, signal_handler);
 
     setup_logging();
    
-    std::string filename = "pidtune.db";
-    std::remove(filename.c_str());
-    twip::DBWriter db(filename);
+    std::remove(dbpath.c_str());
+    twip::DBWriter db(dbpath);
     twip::GzHelper* pGz = twip::GzHelper::getInstance();
     twip::PIDController controller;
 
     twip::PIDTuner tuner(&db, pGz);
     tuner.runTrials();
-    //while(!g_terminatePub) {}
-   
+    
     return 0;
 }

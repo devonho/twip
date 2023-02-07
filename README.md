@@ -42,6 +42,7 @@ cmake ../
 ```
 
 ## Running 
+![Gazebo Sim](./docs/fig2.gif "Gazebo Sim")
 
 ### Start Gazebo
 ```

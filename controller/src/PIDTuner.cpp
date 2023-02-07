@@ -1,6 +1,8 @@
 #include "PIDTuner.h"
 #include <chrono>
 
+extern std::atomic<bool> g_terminatePub;
+
 namespace twip
 {
 
@@ -30,8 +32,10 @@ void PIDTuner::runTrial(PIDController* pCtrl)
     unsigned long int ts = (unsigned long int)std::chrono::system_clock::now().time_since_epoch().count();
     PoseDBObject poserec(p, ts);
     PIDParamDBObject pidrec(pCtrl->Kp, pCtrl->Ki, pCtrl->Kd, ts);
+    _pDb->open();
     _pDb->insert(&poserec);
     _pDb->insert(&pidrec);
+    _pDb->close();
 }
 
 void PIDTuner::runTrials()
@@ -41,19 +45,26 @@ void PIDTuner::runTrials()
     PIDParamDBObject obj2;
     _pDb->create_table(&obj1);
     _pDb->create_table(&obj2);
-    for(int i=1;i<=10;i++)
+    _pDb->close();
+    for(int i=1;i<=1;i++)
     {
-        for(int j=1;j<=10;j++)
+        for(int j=1;j<=1000;j++)
         {
-            for(int k=1;k<=10;k++)
+            for(int k=1;k<=1;k++)
             {
                 PIDController ctrl;
-                ctrl.Kd = i * 10;
+                ctrl.Kd = i * 100;
                 ctrl.Ki = j * 0.001;
-                ctrl.Kd = k * 1;
+                ctrl.Kd = k * 10;
                 runTrial(&ctrl);
+
+                if(g_terminatePub) break;
             }
+
+            if(g_terminatePub) break;
         }            
+
+        if(g_terminatePub) break;
     }
     _pDb->close();
 

@@ -13,7 +13,7 @@ class PIDController {
 public:
     PIDController();
     ~PIDController();
-    gz::msgs::Twist step(const gz::msgs::Pose &_msg);
+    gz::msgs::Twist step(const gz::msgs::Pose &_msg, const gz::msgs::Twist twist_in);
     float Kp = 100.0;
     float Ki = 0.981;
     float Kd = 10.0;

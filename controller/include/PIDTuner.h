@@ -4,18 +4,32 @@
 #include "db.h"
 #include "PIDController.h"
 #include "GzHelper.h"
+#include "gz/msgs.hh"
 
 namespace twip
 {
-class PIDTuner 
+
+class PIDRunner
+{
+protected:
+    GzHelper* _pGz;
+    PIDController* _pCtrl;
+public:
+    void runStep(gz::msgs::Twist t_in);
+    void runLoop();
+    PIDRunner(GzHelper* pGz, PIDController* pCtrl);
+    ~PIDRunner(){}
+};
+
+
+class PIDTuner : PIDRunner
 {
     DBWriter* _pDb;
-    GzHelper* _pGz;
 public:
-    PIDTuner(DBWriter* pDb, GzHelper* pGz);
+    PIDTuner(DBWriter* pDb, GzHelper* pGz, PIDController* pCtrl);
     ~PIDTuner(){};
     
-    void runTrial(PIDController* pCtrl);
+    void runTrial();
     void runTrials();
 };
     

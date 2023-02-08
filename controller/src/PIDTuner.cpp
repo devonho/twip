@@ -6,36 +6,66 @@ extern std::atomic<bool> g_terminatePub;
 namespace twip
 {
 
-PIDTuner::PIDTuner(DBWriter* pDb, GzHelper* pGz)
+
+PIDRunner::PIDRunner(GzHelper* pGz, PIDController* pCtrl)
 {
-    _pDb = pDb;
     _pGz = pGz;
+    _pCtrl = pCtrl;
 }
 
-void PIDTuner::runTrial(PIDController* pCtrl)
+PIDTuner::PIDTuner(DBWriter* pDb, GzHelper* pGz, PIDController* pCtrl)
+    : PIDRunner(pGz, pCtrl)
+{
+    _pDb = pDb;
+}
+
+void PIDRunner::runStep(gz::msgs::Twist t_in)
+{
+    gz::msgs::Pose p;
+    gz::msgs::Twist t_out;
+    p = _pGz->get_pose();
+    t_out = _pCtrl->step(p, t_in);        
+    _pGz->send_command(t_out);
+}
+
+void PIDRunner::runLoop()
+{
+    gz::msgs::Twist t_in;
+    t_in.mutable_angular()->set_z((10*3.142/180));
+    t_in.clear_linear();
+    while(g_terminatePub != true)
+    {
+        runStep(t_in);
+    }
+}
+
+void PIDTuner::runTrial()
 {
     unsigned long itercount = 0;
-    gz::msgs::Pose p;
-    gz::msgs::Twist t;
+    gz::msgs::Twist t_in;
+    t_in.clear_linear();
+
     while(true)
     {
-        p = _pGz->get_pose();
-        t = pCtrl->step(p);        
-        _pGz->send_command(t);
-    
+        runStep(t_in);
+
         itercount++;
         if(itercount > 500){
-            _pGz->reset_world();
             break;
         }
     }
+
     unsigned long int ts = (unsigned long int)std::chrono::system_clock::now().time_since_epoch().count();
-    PoseDBObject poserec(p, ts);
-    PIDParamDBObject pidrec(pCtrl->Kp, pCtrl->Ki, pCtrl->Kd, ts);
+    PoseDBObject poserec(_pGz->get_pose(), ts);
+    PIDParamDBObject pidrec(_pCtrl->Kp, _pCtrl->Ki, _pCtrl->Kd, ts);
+
     _pDb->open();
     _pDb->insert(&poserec);
     _pDb->insert(&pidrec);
     _pDb->close();
+
+    _pGz->reset_world();
+
 }
 
 void PIDTuner::runTrials()
@@ -52,16 +82,15 @@ void PIDTuner::runTrials()
         {
             for(int k=1;k<=1;k++)
             {
-                PIDController ctrl;
-                ctrl.Kd = i * 100;
-                ctrl.Ki = j * 0.001;
-                ctrl.Kd = k * 10;
+                _pCtrl->Kd = i * 100;
+                _pCtrl->Ki = j * 0.001;
+                _pCtrl->Kd = k * 10;
                 /*
-                ctrl.Kd = 100;
-                ctrl.Ki = 0.981;
-                ctrl.Kd = 10;
+                _pCtrl->Kd = 100;
+                _pCtrl->Ki = 0.981;
+                _pCtrl->Kd = 10;
                 */
-                runTrial(&ctrl);
+                runTrial();
 
                 if(g_terminatePub) break;
             }

@@ -35,12 +35,17 @@ void setup_logging()
 int main(int argc, char **argv)
 {    
     std::string dbpath = "./pidtune.db";
+    bool runTune = false;
     extern char *optarg;
     int f;
-    while((f = getopt(argc, argv, "f:")) != -1) {
+    while((f = getopt(argc, argv, "tf:")) != -1) {
         switch(f){
             case 'f':
                 dbpath = optarg;
+                break;
+            case 't':
+                runTune = true;
+                break;
         }
     }
     
@@ -54,8 +59,16 @@ int main(int argc, char **argv)
     twip::GzHelper* pGz = twip::GzHelper::getInstance();
     twip::PIDController controller;
 
-    twip::PIDTuner tuner(&db, pGz);
-    tuner.runTrials();
+    if(runTune)
+    {
+        twip::PIDTuner tuner(&db, pGz, &controller);
+        tuner.runTrials();
+    }
+    else
+    {
+        twip::PIDRunner runner(pGz, &controller);
+        runner.runLoop();
+    }
     
     return 0;
 }

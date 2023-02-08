@@ -55,6 +55,7 @@ Add `Key Publisher` via the plugin menu.
 ```
 ./twip/build/src/controller
 ```
+[YouTube](https://youtu.be/IyWVEmLUmFI)
 
 ## References
 

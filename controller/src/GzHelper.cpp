@@ -14,9 +14,14 @@ GzHelper* GzHelper::getInstance()
     return _pInstance;
 }
 
-void GzHelper::cb(const gz::msgs::Pose &_msg)
+void GzHelper::posecb(const gz::msgs::Pose &_msg)
 {
     GzHelper::getInstance()->_pose_mq.push(_msg);
+}
+
+void GzHelper::keyboardcb(const gz::msgs::Int32 &_msg)
+{
+    GzHelper::getInstance()->_keyboard_mq.push(_msg);
 }
 
 GzHelper::GzHelper()
@@ -29,12 +34,17 @@ GzHelper::GzHelper()
         throw msg;
     }
 
-    if (!_node.Subscribe("/world/empty/model/cart_rigid_suspension/pose", this->cb))
+    if (!_node.Subscribe("/world/empty/model/cart_rigid_suspension/pose", this->posecb))
     {
         std::string msg = "Error subscribing to pose topic";
         throw msg;
     }
 
+    if (!_node.Subscribe("/keyboard/keypress", this->keyboardcb))
+    {
+        std::string msg = "Error subscribing to keypress topic";
+        //throw msg;
+    }
 }
 
 void GzHelper::reset_world()
@@ -58,6 +68,16 @@ gz::msgs::Pose GzHelper::get_pose()
     return pose;
 }
 
+GzKey GzHelper::get_key()
+{
+    gz::msgs::Int32 keymsg;
+    GzKey key = GzKey::INVALID;
+    if(_keyboard_mq.pop_wait(keymsg))
+    {
+        key = (GzKey)keymsg.data();
+    }
+    return key;
+}
 
 
 }

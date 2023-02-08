@@ -6,7 +6,6 @@ extern std::atomic<bool> g_terminatePub;
 namespace twip
 {
 
-
 PIDRunner::PIDRunner(GzHelper* pGz, PIDController* pCtrl)
 {
     _pGz = pGz;
@@ -31,10 +30,27 @@ void PIDRunner::runStep(gz::msgs::Twist t_in)
 void PIDRunner::runLoop()
 {
     gz::msgs::Twist t_in;
-    t_in.mutable_angular()->set_z((10*3.142/180));
     t_in.clear_linear();
     while(g_terminatePub != true)
     {
+        switch(_pGz->get_key())
+        {
+            case GzKey::LEFT_ARROW:
+                t_in.mutable_angular()->set_z((10*3.142/180));
+                break;
+            case GzKey::RIGHT_ARROW:
+                t_in.mutable_angular()->set_z((-10*3.142/180));
+                break;
+            case GzKey::UP_ARROW:
+                t_in.mutable_linear()->set_y(1);
+                break;
+            case GzKey::DOWN_ARROW:
+                t_in.mutable_linear()->set_y(-1);
+                break;
+            default:  
+                break;              
+        }
+
         runStep(t_in);
     }
 }

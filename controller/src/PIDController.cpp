@@ -13,7 +13,7 @@ gz::msgs::Twist PIDController::step(const gz::msgs::Pose &_msg, gz::msgs::Twist 
     gz::msgs::Twist twist_out;
     gz::msgs::Vector3d v_out;
 
-    float pitch = twist_in.mutable_linear()->y() > 0 ? 0.001f : -0.001f;
+    float pitch = twist_in.mutable_linear()->y() > 0 ? 0.01f : -0.01f;
 
     float err = q.Pitch() + pitch;
 

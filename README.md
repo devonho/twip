@@ -5,9 +5,9 @@
 
 ## Introduction
 
-This is an attempt at implementing a PID controller for a Two Wheeled Inverted Pendulum (a.k.a. Segway) mobile robot. Traditional approaches to this problem have relied on control engineering approaches of modeling the robot (i.e. the plant) and then designing the feedback controller using pole-zero analysis [Ogata2010](https://www.pearson.com/en-us/subject-catalog/p/modern-control-engineering/P200000003521/9780137551064). 
+This is an attempt at implementing a PID controller for a Two Wheeled Inverted Pendulum (a.k.a. Segway) mobile robot. Traditional approaches to this problem have relied on control engineering approaches of modeling the robot (i.e. the plant) and then designing the feedback controller using pole-zero analysis [Ogata2010](https://www.pearson.com/en-us/subject-catalog/p/modern-control-engineering/P200000003521/9780137551064) or solution via state-space modeling [Kim2005](https://idp.springer.com/authorize/casa?redirect_uri=https://link.springer.com/content/pdf/10.1007/s10846-005-9022-4.pdf&casa_token=-iNYZSwBI68AAAAA:toxu4aT68voEpljCI5h_c5MHtPpvbaKAp0ToJrsorzMb_3C1dwlQE7s26gMPtC_K23ODzExWvDiA9Wg3bw). 
 
-With the availability of environments like Gazebo Sim, solving the PID gain parameters by simulating the robot with a range of parameters becomes a simple approach to solving a complicated problem.
+With the availability of environments like Gazebo Sim, solving the PID gain parameters by simulating the robot with a range of parameters becomes a simple approach to solving a complicated problem. Modeling of an arbitrary physical model is simplified to modeling of representative geometry with approximate moment of inertia calculations using [readily available tools](https://amesweb.info/inertia/mass-moment-of-inertia-calculator.aspx).
 
 ## Building
 
@@ -61,4 +61,4 @@ Add `Key Publisher` via the plugin menu.
 
 Ogata2010 - Ogata K. Modern control engineering. Upper Saddle River, NJ: Prentice hall; 2010 Jan.
 
-
+Kim2005 - Kim, Y., Kim, S. H., & Kwak, Y. K. (2005). Dynamic analysis of a nonholonomic two-wheeled inverted pendulum robot. Journal of Intelligent and Robotic Systems, 44, 25-46.

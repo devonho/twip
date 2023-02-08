@@ -1,6 +1,8 @@
 #include "queue.h"
 #include <unistd.h>
 
+#define USE_MUTEXES
+
 namespace twip
 {
 Queue::Queue() {
@@ -20,23 +22,29 @@ void Queue::push(gz::msgs::Pose pose){
 bool Queue::pop_wait(gz::msgs::Pose &pose){
     unsigned int count = 0;
     while(true){
-        /*
+        
+        #ifdef USE_MUTEXES
         try {
             pthread_mutex_lock(&_mutex);
         }
         catch(std::exception e)
         {
             std::cout << e.what() <<std::endl;
-        }*/
+        }
+        #endif //USE_MUTEXES
         
         if(_array.size() > 0)
         {
             pose = _array.front();
             _array.pop_front();
-            //pthread_mutex_unlock(&_mutex);
+            #ifdef USE_MUTEXES
+            pthread_mutex_unlock(&_mutex);
+            #endif
             return true;
         } else {
-            //pthread_mutex_unlock(&_mutex);
+            #ifdef USE_MUTEXES
+            pthread_mutex_unlock(&_mutex);
+            #endif
             timespec req, rem;
             req.tv_nsec = 1000000;
             req.tv_sec = 0;

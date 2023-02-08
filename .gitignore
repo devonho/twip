@@ -1,5 +1,6 @@
 build/
 .vscode/
 docs/reference/
+python/.ipynb_checkpoints/
 *.db
 *.log

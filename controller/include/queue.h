@@ -7,7 +7,7 @@
 #include <gz/msgs.hh>
 #include <unistd.h>
 
-#define USE_MUTEXES
+//#define USE_MUTEXES
 
 namespace twip
 {
